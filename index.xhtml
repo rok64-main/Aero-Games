@@ -1,0 +1,1574 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AeroProx</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <script type="text/javascript" src="https://cdn.tailwindcss.com"></script>
+    <!-- Poki SDK Integration -->
+    <script type="text/javascript" src="gnmathassets/poki-sdk-core-v2.234.2.js"></script>
+    <script type="text/javascript" src="gnmathassets/poki-sdk.js"></script>
+    <style type="text/css">
+        body {
+            background-color: #050505;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(30, 58, 138, 0.3) 0, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(88, 28, 135, 0.3) 0, transparent 50%),
+                radial-gradient(at 50% 50%, rgba(17, 24, 39, 1) 0, transparent 100%);
+            color: #ffffff;
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Vertical Sidebar */
+        .sidebar {
+            width: 260px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+            padding: 2rem 1rem;
+            flex-shrink: 0;
+        }
+
+        .sidebar-header {
+            padding: 0 1rem 3rem 1rem;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.9rem;
+        }
+
+        .site-logo {
+            width: 42px;
+            height: 42px;
+            object-fit: contain;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.08);
+            padding: 0.25rem;
+        }
+
+        .site-title {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 0;
+            letter-spacing: -0.05em;
+            color: #fff;
+        }
+
+        .nav-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            flex: 1;
+        }
+
+        .nav-link {
+            padding: 0.85rem 1.25rem;
+            border-radius: 10px;
+            color: #888;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            cursor: pointer;
+            border: 1px solid transparent;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            transform: scale(1.02);
+        }
+
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Main Content Area */
+        .main-view {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            padding: 2rem;
+        }
+
+        .content-card {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2.5rem;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section { 
+            display: none; 
+            height: 100%; 
+            width: 100%; 
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .section.active { 
+            display: flex; 
+            flex-direction: column; 
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            font-size: 1.75rem;
+            font-weight: bold;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 1rem;
+        }
+
+        .search-container {
+            width: 100%;
+            max-width: 600px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 18px;
+            padding: 1rem 1.5rem;
+            color: #f8fafc;
+            font-size: 1rem;
+            outline: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02), 0 20px 40px rgba(0, 0, 0, 0.08);
+            backdrop-filter: blur(12px);
+            position: relative;
+            z-index: 1;
+        }
+
+        .search-input:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .search-input:focus {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(96, 165, 250, 0.65);
+            box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.25), 0 28px 60px rgba(0, 0, 0, 0.12);
+            color: #ffffff;
+        }
+
+        .proxy-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem 1.25rem;
+            border-radius: 16px;
+            background: rgba(16, 24, 40, 0.42);
+            backdrop-filter: blur(18px);
+            color: #f8fafc;
+            pointer-events: none;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .proxy-overlay::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 16px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0) 70%);
+            pointer-events: none;
+        }
+
+        .proxy-sign {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0.9rem 1.3rem;
+            border-radius: 18px;
+            background: radial-gradient(circle at top left, #d39e5f, #a86e2c 45%, #7a4e20 100%);
+            border: 2px solid #6d3d1c;
+            box-shadow: 0 18px 40px rgba(0,0,0,0.25);
+            z-index: 1;
+            width: min(100%, 420px);
+        }
+
+        .proxy-sign::before,
+        .proxy-sign::after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 12px;
+            background: #6d3d1c;
+            border-radius: 6px;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.2);
+        }
+
+        .proxy-sign::after {
+            top: auto;
+            bottom: -8px;
+        }
+
+        .proxy-overlay h3,
+        .proxy-overlay p,
+        .proxy-overlay .proxy-note {
+            font-family: Arial, sans-serif;
+            position: relative;
+            z-index: 1;
+        }
+
+        .proxy-overlay h3 {
+            margin: 0;
+            font-size: 1.35rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #fff7e4;
+        }
+
+        .proxy-overlay p {
+            margin: 0.35rem 0 0;
+            font-size: 1rem;
+            color: #f2e7cd;
+            line-height: 1.5;
+        }
+
+        .proxy-overlay .proxy-note {
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: #d7d0b4;
+            opacity: 0.95;
+        }
+
+        .proxy-overlay .overlay-x {
+            position: absolute;
+            top: 0.9rem;
+            right: 0.9rem;
+            width: 26px;
+            height: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            color: #ffdddd;
+            font-size: 1.05rem;
+            font-weight: bold;
+            z-index: 2;
+        }
+
+        .proxy-overlay .proxy-note {
+            margin-top: 0.45rem;
+            font-size: 0.85rem;
+            color: #b3b9ff;
+            opacity: 0.95;
+        }
+
+        .search-input:disabled {
+            opacity: 0.58;
+            cursor: not-allowed;
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .game-frame, .browser-frame {
+            width: 100%;
+            flex: 1;
+            border: none;
+            border-radius: 12px;
+            background: #000;
+        }
+
+        .sidebar-footer {
+            padding: 1rem;
+            font-size: 0.75rem;
+            color: #444;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            margin-top: 1rem;
+        }
+
+        .engine-select, .cloak-select {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-radius: 8px;
+            padding: 0.5rem;
+            outline: none;
+            font-size: 0.85rem;
+        }
+
+        .settings-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .settings-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Games Grid Styles â€” Modular Grid */
+        #games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 1rem;
+            overflow-y: auto;
+            padding: 0.25rem 0.25rem 1rem 0.25rem;
+            width: 100%;
+            align-content: start;
+        }
+
+        .youtube-search-form {
+            margin-bottom: 1rem;
+        }
+
+        .youtube-search-input {
+            width: 100%;
+            max-width: 100%;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 18px;
+            padding: 0.95rem 1.35rem;
+            color: #f8fafc;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s ease;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(12px);
+        }
+
+        .youtube-search-input:focus {
+            border-color: rgba(96, 165, 250, 0.6);
+            background: rgba(255, 255, 255, 0.14);
+            box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.18);
+            color: #ffffff;
+        }
+
+        .youtube-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            height: calc(100vh - 260px);
+            min-height: 420px;
+        }
+
+        .youtube-search-form {
+            margin-bottom: 0;
+        }
+
+        .youtube-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            align-items: stretch;
+            overflow-y: auto;
+            padding-right: 0.25rem;
+        }
+
+        .youtube-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 18px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            min-height: 100%;
+        }
+
+        .youtube-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(255, 255, 255, 0.24);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+        }
+
+        .youtube-thumb {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            object-fit: cover;
+            background: #111;
+        }
+
+        .youtube-card-body {
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+            flex: 1;
+        }
+
+        .youtube-card-title {
+            color: #ffffff;
+            font-size: 0.95rem;
+            font-weight: 600;
+            line-height: 1.35;
+            min-height: 3rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .youtube-card-meta {
+            display: flex;
+            justify-content: space-between;
+            gap: 0.65rem;
+            font-size: 0.82rem;
+            color: #9aa5b1;
+            align-items: center;
+        }
+
+        .youtube-card-meta span {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .youtube-player {
+            width: 100%;
+            height: auto;
+            max-height: calc(100vh - 400px);
+            border-radius: 18px;
+            background: #000;
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
+        }
+
+        .youtube-watch-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.1rem;
+            border-radius: 18px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .youtube-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            height: calc(100vh - 260px);
+            min-height: 420px;
+            overflow: hidden;
+        }
+
+        .youtube-panel > .youtube-grid {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .game-button {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 0.6rem 0.4rem 0.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.45rem;
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+        .game-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-3px);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-name {
+            display: block;
+            color: #ccc;
+            text-align: center;
+            font-size: 0.7rem;
+            line-height: 1.2;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            width: 100%;
+            padding: 0 0.15rem;
+        }
+
+        .game-button:hover .game-name {
+            color: #fff;
+        }
+
+        .game-icon {
+            background: rgba(255, 255, 255, 0.05);
+            width: 72px;
+            height: 72px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        /* Fullscreen button */
+        #fullscreen-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.4rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: none;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        #fullscreen-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Vertical Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <img src="aeroprox.png" alt="AeroProx" class="site-logo" />
+                <h1 class="site-title">AeroProx</h1>
+            </div>
+        </div>
+
+        <nav class="nav-container">
+            <a href="javascript:void(0)" id="btn-home" onclick="nav('home')" class="nav-link active">Home</a>
+            <a href="javascript:void(0)" id="btn-browser" onclick="nav('browser')" class="nav-link" style="display:none;">Browser</a>
+            <a href="javascript:void(0)" id="btn-youtube" onclick="nav('youtube')" class="nav-link">YouTube</a>
+            <a href="javascript:void(0)" id="btn-games" onclick="nav('games')" class="nav-link">Games</a>
+            <a href="javascript:void(0)" id="btn-settings" onclick="nav('settings')" class="nav-link">Settings</a>
+            <a href="javascript:void(0)" id="btn-socials" onclick="nav('socials')" class="nav-link">Socials</a>
+            <a href="javascript:void(0)" id="btn-changelog" onclick="nav('changelog')" class="nav-link">Changelog</a>
+            <a href="javascript:void(0)" id="btn-credits" onclick="nav('credits')" class="nav-link">Credits</a>
+        </nav>
+
+        <div class="sidebar-footer">
+            &copy; 2026 AeroProx
+        </div>
+    </div>
+
+    <!-- Main View -->
+    <div class="main-view">
+        <div class="content-card">
+            
+<!-- Home Page -->
+<div id="section-home" class="section active">
+    <h2 class="section-title">Home</h2>
+    <div class="flex-1 flex flex-col items-center justify-center text-center space-y-4">
+        <div>
+            <h3 class="text-4xl font-bold mb-2">Welcome to AeroProx</h3>
+            <p class="text-gray-400">Search the web or enter a URL to get started.</p>
+        </div>
+
+        <div class="search-container">
+            <form onsubmit="handleSearch(event)" action="#">
+                <input 
+                    type="text" 
+                    id="proxy-input"
+                    class="search-input" 
+                    placeholder="Search or enter a URL..."
+                    autocomplete="off"
+                />
+            </form>
+        </div>
+
+        <p id="random-text" class="text-gray-500 text-sm italic"></p>
+
+    </div>
+</div>
+
+            <!-- Browser Page -->
+            <div id="section-browser" class="section">
+                <div class="flex justify-between items-center mb-4 pb-2" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <h2 class="section-title" style="margin-bottom:0; border-bottom:0; padding-bottom: 0;">Browser</h2>
+                    <button onclick="nav('home')" class="text-xs text-gray-500 hover:text-white transition-colors">Close Session</button>
+                </div>
+                <iframe 
+                    id="browser-frame"
+                    src="about:blank" 
+                    class="browser-frame"
+                    title="Proxy Browser"></iframe>
+            </div>
+
+            <!-- YouTube Page -->
+            <div id="section-youtube" class="section">
+                <div class="flex justify-between items-center mb-4 pb-2" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <h2 class="section-title" style="margin-bottom:0; border-bottom:0; padding-bottom: 0;">YouTube</h2>
+                    <button onclick="nav('home')" class="text-xs text-gray-500 hover:text-white transition-colors">Close</button>
+                </div>
+                <div class="youtube-panel">
+                    <form onsubmit="handleYoutubeSearch(event)" action="#" class="youtube-search-form">
+                        <input 
+                            id="youtube-search-input"
+                            class="search-input youtube-search-input" 
+                            placeholder="Search for a video."
+                            autocomplete="off"
+                        />
+                    </form>
+                    <div id="youtube-loading" class="flex items-center justify-center text-center" style="min-height: 10rem;">
+                        <p class="text-gray-400">Search Youtube</p>
+                    </div>
+                    <div id="youtube-grid" class="youtube-grid"></div>
+                </div>
+            </div>
+
+            <div id="section-youtube-watch" class="section">
+                <div class="flex justify-between items-center mb-4 pb-2" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <h2 class="section-title" style="margin-bottom:0; border-bottom:0; padding-bottom: 0;">Watch Video</h2>
+                    <button onclick="nav('youtube')" class="text-xs text-gray-500 hover:text-white transition-colors">Back to Search</button>
+                </div>
+                <div class="youtube-panel">
+                    <video id="youtube-player" class="youtube-player" controls="controls" playsinline="playsinline" preload="metadata"></video>
+                    <div class="youtube-watch-info">
+                        <div>
+                            <div id="youtube-watch-title" class="youtube-card-title" style="margin-bottom: 0.4rem;"></div>
+                            <div id="youtube-watch-channel" class="text-gray-400" style="font-size:0.9rem;"></div>
+                        </div>
+                        <span id="youtube-watch-status" class="text-sm text-gray-400">Ready to play.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Games Page -->
+            <div id="section-games" class="section">
+                <div class="flex justify-between items-center mb-4 pb-2" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <h2 class="section-title" style="margin-bottom:0; border-bottom:0; padding-bottom: 0;">Games [GN-Math]</h2>
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <button id="fullscreen-btn" onclick="fullscreenGame()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+                            Fullscreen
+                        </button>
+                        <button id="back-to-grid" onclick="showGamesGrid()" class="text-xs text-gray-500 hover:text-white transition-colors" style="display:none;">Back to Library</button>
+                    </div>
+                </div>
+                
+                <div id="games-search-container" style="margin-bottom: 1rem; display: none;">
+                    <input type="text" id="games-search-input" class="search-input" placeholder="Search games..." style="width: 100%; max-width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 0.75rem; color: #fff; font-size: 0.9rem;" oninput="filterGames(this.value)" />
+                </div>
+                
+                <div id="games-loading" class="flex-1 flex items-center justify-center">
+                    <div class="text-center">
+                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+                        <p class="text-gray-400">Loading games...</p>
+                    </div>
+                </div>
+                
+                <div id="games-grid" class="flex-1" style="display:grid;">
+                    <!-- Buttons will be injected here -->
+                </div>
+
+                <iframe 
+                    id="game-viewer"
+                    src="about:blank" 
+                    class="game-frame"
+                    style="display:none;"
+                    title="Game Viewer"
+                    allowfullscreen=""
+                    allow="autoplay; fullscreen; microphone; camera; geolocation; gyroscope; accelerometer; magnetometer; xr-spatial-tracking; gamepad; microphone; camera"
+                    sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-pointer-lock allow-top-navigation allow-modals allow-downloads allow-presentation"></iframe>
+            </div>
+
+            <!-- Settings Page -->
+            <div id="section-settings" class="section">
+                <h2 class="section-title">Settings</h2>
+                <div class="space-y-6">
+                    <!-- Search Engine -->
+                    <div class="p-6 rounded-xl bg-white/5 border border-white/5">
+                        <p class="text-blue-400 text-sm font-bold uppercase tracking-wider mb-2">Search Engine</p>
+                        <select id="search-engine-select" class="engine-select w-full max-w-xs">
+                            <option value="https://www.google.com/search?q=">Google</option>
+                            <option value="https://www.bing.com/search?q=">Bing</option>
+                            <option value="https://duckduckgo.com/?q=">DuckDuckGo</option>
+                            <option value="https://search.yahoo.com/search?p=">Yahoo</option>
+                        </select>
+                        <p class="text-xs text-gray-500 mt-4">Choose your preferred engine for non-URL queries.</p>
+                    </div>
+
+                    <!-- Tab Cloak -->
+                    <div class="p-6 rounded-xl bg-white/5 border border-white/5">
+                        <p class="text-purple-400 text-sm font-bold uppercase tracking-wider mb-2">Tab Cloak</p>
+                        <div class="flex flex-col space-y-4">
+                            <select id="cloak-select" class="cloak-select w-full max-w-xs">
+                                <option value="about:blank">about:blank</option>
+                                <option value="blob:null">blob:null</option>
+                            </select>
+                            <button onclick="cloakTab()" class="settings-btn w-fit">Enable Cloak</button>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-4">Hides this site in a new invisible tab for privacy.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Socials Page -->
+            <div id="section-socials" class="section">
+                <h2 class="section-title">Socials</h2>
+                <div class="space-y-6">
+                    <div class="p-6 rounded-xl bg-white/5 border border-white/5">
+                        <a 
+                            href="https://discord.gg/3AMJkMfp" 
+                            target="_blank" 
+                            class="px-4 py-3 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold transition inline-flex items-center justify-center"
+                            aria-label="Join Discord Server"
+                        >
+                            <img src="https://cdn.simpleicons.org/discord/white" width="20" height="20" alt="Discord" />
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div id="section-changelog" class="section">
+    <h2 class="section-title">Changelog</h2>
+    <div class="space-y-6">
+        <div class="p-6 rounded-xl bg-white/5 border border-white/5">
+            <p class="text-blue-400 text-sm font-bold uppercase tracking-wider mb-1">Version 1.0</p>
+            <p class="text-2xl font-bold">Release</p>
+            <p style="color: #888; margin-top: 0.5rem;">
+                        Everything here right now<br />
+            </p>
+        </div>
+    </div>
+</div>
+
+            <!-- Credits Page -->
+            <div id="section-credits" class="section">
+                <h2 class="section-title">Credits</h2>
+                <div class="space-y-6">
+                    <div class="p-6 rounded-xl bg-white/5 border border-white/5">
+                        <p class="text-blue-400 text-sm font-bold uppercase tracking-wider mb-1">AeroProx Owner</p>
+                        <p class="text-2xl font-bold">Rok64</p>
+                        <p style="color: #888; margin-top: 0.5rem;">Owner &amp; Developer</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script type="text/javascript">
+    //<![CDATA[
+        function nav(id) {
+            var sections = document.querySelectorAll('.section');
+            for (var i = 0; i < sections.length; i++) {
+                sections[i].classList.remove('active');
+            }
+            document.getElementById('section-' + id).classList.add('active');
+            
+            var navLinks = document.querySelectorAll('.nav-link');
+            for (var j = 0; j < navLinks.length; j++) {
+                navLinks[j].classList.remove('active');
+            }
+            
+            var targetBtn = document.getElementById('btn-' + id);
+            if (targetBtn) {
+                targetBtn.classList.add('active');
+                if (id === 'browser') {
+                    targetBtn.style.display = 'flex';
+                }
+            }
+        }
+
+        function setRandomText() {
+            var texts = [
+                "do your homework lil bro",
+                "join discord for more aeroprox link",
+                "idk what else to add",
+                "placeholder text",
+                "aeroprox is cool",
+                "this is a random text",
+                "i dream about summer break",
+                "rok64 made this website",
+                "some features is broken",
+                "W GN-Math"
+
+            ];
+            var randomIndex = Math.floor(Math.random() * texts.length);
+            var randomTextElement = document.getElementById('random-text');
+            if (randomTextElement) {
+                randomTextElement.textContent = texts[randomIndex];
+            }
+        }
+
+        async function handleSearch(event) {
+            event.preventDefault();
+
+            var input = document.getElementById('proxy-input').value.trim();
+            if (!input) return;
+
+            var url = normalizeProxyTarget(input);
+            nav('browser');
+            await openProxyBrowser(url);
+        }
+
+        function normalizeProxyTarget(input) {
+            var value = input ? input.trim() : '';
+            if (!value) {
+                return 'https://duckduckgo.com/';
+            }
+
+            var hasScheme = /^[a-zA-Z][a-zA-Z\d+\-.]*:\/\//.test(value);
+            var looksLikeUrl = /^(?:www\.)?[^\s]+\.[a-z]{2,}(?:[\/\?#].*)?$/i.test(value);
+
+            if (hasScheme) {
+                return value;
+            }
+            if (looksLikeUrl) {
+                return 'https://' + value;
+            }
+            return getSearchUrl(value);
+        }
+
+        function getSearchUrl(query) {
+            var engineSelect = document.getElementById('search-engine-select');
+            var engineBase = (engineSelect && engineSelect.value) ? engineSelect.value : 'https://duckduckgo.com/?q=';
+            return engineBase + encodeURIComponent(query);
+        }
+
+        function revokeProxyBlob(frame) {
+            if (frame && frame._proxyBlobUrl) {
+                URL.revokeObjectURL(frame._proxyBlobUrl);
+                frame._proxyBlobUrl = null;
+            }
+        }
+
+        async function openProxyBrowser(url) {
+            var frame = document.getElementById('browser-frame');
+            if (!frame) return;
+
+            revokeProxyBlob(frame);
+            frame.src = 'about:blank';
+            frame.srcdoc = '<div style="min-height:100%;display:flex;align-items:center;justify-content:center;color:#fff;font-family:system-ui, sans-serif;font-size:1rem;">Loading private proxy...</div>';
+
+            try {
+                var html = await fetchViaProxy(url);
+                var proxyDoc = injectBaseTag(html, url);
+                var blob = new Blob([proxyDoc], { type: 'text/html' });
+                var blobUrl = URL.createObjectURL(blob);
+
+                frame._proxyBlobUrl = blobUrl;
+                frame.srcdoc = '';
+                frame.src = blobUrl;
+            } catch (error) {
+                console.warn('Proxy fetch failed, falling back to direct load:', error);
+                frame.srcdoc = '';
+                frame.src = url;
+            }
+        }
+
+        async function handleYoutubeSearch(event) {
+            event.preventDefault();
+            var query = document.getElementById('youtube-search-input').value.trim();
+            if (!query) return;
+            nav('youtube');
+            await searchYoutubeVideos(query);
+        }
+
+        async function searchYoutubeVideos(query) {
+            var loading = document.getElementById('youtube-loading');
+            var grid = document.getElementById('youtube-grid');
+            if (loading) {
+                loading.style.display = 'flex';
+                loading.innerHTML = '<p class="text-gray-400">Searching YouTube for "' + query + '"...</p>';
+            }
+            if (grid) {
+                grid.innerHTML = '';
+                grid.style.display = 'none';
+            }
+
+            try {
+                var url = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(query);
+                var html = await fetchViaProxy(url);
+                var videos = parseYoutubeResults(html);
+
+                if (!videos.length) {
+                    if (loading) {
+                        loading.innerHTML = '<p class="text-gray-400">Unable to parse search results. Try again or use a different keyword.</p>';
+                    }
+                    return;
+                }
+
+                if (loading) {
+                    loading.style.display = 'none';
+                }
+                if (grid) {
+                    grid.style.display = 'grid';
+                    renderYoutubeGrid(videos);
+                }
+            } catch (error) {
+                console.error('YouTube search error:', error);
+                if (loading) {
+                    loading.innerHTML = '<p class="text-gray-400">Unable to load YouTube results. Try again later.</p>';
+                }
+            }
+        }
+
+        function parseYoutubeResults(html) {
+            try {
+                var data = extractYoutubeInitialData(html);
+                if (!data) {
+                    console.warn('YouTube initial data not found');
+                    return [];
+                }
+
+                console.log('Extracted YouTube data:', data); // Debug log
+
+                var contents = data.contents && data.contents.twoColumnSearchResultsRenderer && data.contents.twoColumnSearchResultsRenderer.primaryContents && data.contents.twoColumnSearchResultsRenderer.primaryContents.sectionListRenderer && data.contents.twoColumnSearchResultsRenderer.primaryContents.sectionListRenderer.contents;
+                if (!Array.isArray(contents)) {
+                    console.warn('Contents not found or not array:', contents);
+                    return [];
+                }
+
+                var videos = [];
+                contents.forEach(function(section) {
+                    var items = (section.itemSectionRenderer && section.itemSectionRenderer.contents) || [];
+                    items.forEach(function(item) {
+                        var video = item.videoRenderer;
+                        if (!video || !video.videoId) return;
+
+                        var title = (video.title && video.title.runs && video.title.runs[0] && video.title.runs[0].text) || 'Untitled';
+                        var href = 'https://www.youtube.com/watch?v=' + video.videoId;
+                        var thumbnails = (video.thumbnail && video.thumbnail.thumbnails) || [];
+                        var thumb = thumbnails.length ? thumbnails[thumbnails.length - 1].url : '';
+                        var channel = (video.ownerText && video.ownerText.runs && video.ownerText.runs[0] && video.ownerText.runs[0].text) || 'YouTube';
+
+                        videos.push({
+                            title: title,
+                            url: href,
+                            thumbnail: thumb || 'https://img.icons8.com/ios-filled/240/ffffff/video.png',
+                            channel: channel
+                        });
+                    });
+                });
+
+                console.log('Parsed videos:', videos.length); // Debug log
+                return videos.slice(0, 24);
+            } catch (e) {
+                console.warn('Failed to parse YouTube HTML:', e);
+                return [];
+            }
+        }
+
+
+        function extractYoutubeInitialData(html) {
+            var regexes = [
+                /ytInitialData\s*=\s*(\{[\s\S]*?\})\s*;<\/script>/,
+                /ytInitialData\s*=\s*(\{[\s\S]*?\});/,
+                /window\["ytInitialData"\]\s*=\s*(\{[\s\S]*?\});/
+            ];
+
+            for (var i = 0; i < regexes.length; i++) {
+                var match = regexes[i].exec(html);
+                if (match && match[1]) {
+                    try {
+                        return JSON.parse(match[1]);
+                    } catch (e) {
+                        try {
+                            return JSON.parse(match[1].replace(/\n/g, ''));
+                        } catch (e2) {
+                            console.warn('Failed to JSON.parse YouTube initial data:', e2);
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        function renderYoutubeGrid(videos) {
+            var grid = document.getElementById('youtube-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            videos.forEach(function(video) {
+                var card = document.createElement('div');
+                card.className = 'youtube-card';
+                card.onclick = function() {
+                    playYoutubeVideo(video);
+                };
+
+                var thumb = document.createElement('img');
+                thumb.className = 'youtube-thumb';
+                thumb.src = video.thumbnail;
+                thumb.alt = video.title;
+                card.appendChild(thumb);
+
+                var body = document.createElement('div');
+                body.className = 'youtube-card-body';
+
+                var title = document.createElement('div');
+                title.className = 'youtube-card-title';
+                title.textContent = video.title;
+                body.appendChild(title);
+
+                var meta = document.createElement('div');
+                meta.className = 'youtube-card-meta';
+
+                var channel = document.createElement('span');
+                channel.textContent = video.channel || 'YouTube';
+                meta.appendChild(channel);
+
+                var watch = document.createElement('span');
+                watch.textContent = 'Watch';
+                meta.appendChild(watch);
+
+                body.appendChild(meta);
+                card.appendChild(body);
+                grid.appendChild(card);
+            });
+        }
+
+        async function playYoutubeVideo(video) {
+            var player = document.getElementById('youtube-player');
+            var titleEl = document.getElementById('youtube-watch-title');
+            var channelEl = document.getElementById('youtube-watch-channel');
+            var statusEl = document.getElementById('youtube-watch-status');
+
+            if (!player || !titleEl || !channelEl || !statusEl) return;
+
+            nav('youtube-watch');
+            titleEl.textContent = video.title;
+            channelEl.textContent = video.channel || 'YouTube';
+            statusEl.textContent = 'Loading video...';
+            player.src = '';
+            player.pause();
+            player.title = video.title; // Add video name to player title
+
+            try {
+                var html = await fetchViaProxy(video.url);
+                var playerData = extractYoutubePlayerResponse(html);
+                if (!playerData) {
+                    throw new Error('Could not extract player data from YouTube page.');
+                }
+                var streamUrl = pickYoutubeStream(playerData);
+                if (!streamUrl) {
+                    throw new Error('No compatible video stream found.');
+                }
+
+                player.src = streamUrl;
+                player.load();
+                await player.play();
+                statusEl.textContent = 'Streaming now';
+            } catch (error) {
+                console.error('YouTube play error:', error);
+                statusEl.textContent = 'Unable to load video: ' + error.message + '. Try opening in new tab.';
+                // Fallback: offer to open in new tab
+                var fallbackBtn = document.createElement('button');
+                fallbackBtn.textContent = 'Open in New Tab';
+                fallbackBtn.className = 'text-xs text-blue-400 hover:text-blue-300 underline ml-2';
+                fallbackBtn.onclick = function() { window.open(video.url, '_blank'); };
+                statusEl.appendChild(fallbackBtn);
+            }
+        }
+
+
+        function extractYoutubePlayerResponse(html) {
+            var regexes = [
+                /ytInitialPlayerResponse\s*=\s*(\{[\s\S]*?\})\s*;<\/script>/,
+                /ytInitialPlayerResponse\s*=\s*(\{[\s\S]*?\});/,
+                /window\["ytInitialPlayerResponse"\]\s*=\s*(\{[\s\S]*?\});/,
+                /var\s+ytInitialPlayerResponse\s*=\s*(\{[\s\S]*?\});/,
+                /ytInitialPlayerResponse\s*:\s*(\{[\s\S]*?\}),/,
+                /"ytInitialPlayerResponse":\s*(\{[\s\S]*?\}),/,
+                /ytInitialPlayerResponse\s*=\s*(\{[\s\S]*?\})\s*$/
+            ];
+
+            for (var i = 0; i < regexes.length; i++) {
+                var match = regexes[i].exec(html);
+                if (match && match[1]) {
+                    try {
+                        var jsonStr = match[1].trim();
+                        // Remove trailing comma if present
+                        jsonStr = jsonStr.replace(/,$/, '');
+                        return JSON.parse(jsonStr);
+                    } catch (e) {
+                        console.warn('Failed to JSON.parse YouTube player response with regex', i, ':', e);
+                        // Try to clean the string
+                        try {
+                            var cleaned = jsonStr.replace(/[\n\r\t]/g, ' ').replace(/\s+/g, ' ');
+                            return JSON.parse(cleaned);
+                        } catch (e2) {
+                            console.warn('Failed to parse cleaned JSON:', e2);
+                        }
+                    }
+                }
+            }
+
+            console.warn('No ytInitialPlayerResponse found in HTML');
+            return null;
+        }
+
+        function pickYoutubeStream(playerData) {
+            if (!playerData || !playerData.streamingData) return null;
+
+            var progressive = (playerData.streamingData.formats || []).filter(function(format) {
+                return format.mimeType && format.mimeType.indexOf('mp4') !== -1;
+            });
+            progressive.sort(function(a, b) {
+                return (b.bitrate || 0) - (a.bitrate || 0);
+            });
+
+            for (var i = 0; i < progressive.length; i++) {
+                var stream = progressive[i];
+                var url = resolveYoutubeStreamUrl(stream);
+                if (url) return url;
+            }
+
+            var adaptive = (playerData.streamingData.adaptiveFormats || []).filter(function(format) {
+                return format.mimeType && format.mimeType.indexOf('mp4') !== -1 && format.mimeType.indexOf('audio') === -1;
+            });
+            adaptive.sort(function(a, b) {
+                return (b.bitrate || 0) - (a.bitrate || 0);
+            });
+
+            for (var j = 0; j < adaptive.length; j++) {
+                var stream2 = adaptive[j];
+                var url2 = resolveYoutubeStreamUrl(stream2);
+                if (url2) return url2;
+            }
+
+            return null;
+        }
+
+        function resolveYoutubeStreamUrl(stream) {
+            if (!stream) return null;
+            if (stream.url) return stream.url;
+
+            var cipher = stream.signatureCipher || stream.cipher;
+            if (!cipher) return null;
+
+            var params = new URLSearchParams(cipher);
+            var url = params.get('url');
+            var sig = params.get('sig') || params.get('ls');
+            var sp = params.get('sp') || 'signature';
+            var s = params.get('s');
+
+            if (!url) return null;
+            if (sig) {
+                return url + '&' + sp + '=' + sig;
+            }
+            if (s) {
+                return url + '&' + sp + '=' + s;
+            }
+            return url;
+        }
+
+        function escapeAttribute(value) {
+            return String(value)
+                .replace(/&/g, '&amp;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+        }
+
+        function injectBaseTag(html, baseUrl) {
+            var baseTag = '<base href="' + escapeAttribute(baseUrl) + '">';
+            if (/<head[\s\S]*?>/i.test(html)) {
+                return html.replace(/<head([\s\S]*?)>/i, function(match) {
+                    return match + baseTag;
+                });
+            }
+            return baseTag + html;
+        }
+
+        async function fetchViaProxy(url) {
+            var proxyServices = [
+                'https://api.allorigins.win/raw?url=',
+                'https://thingproxy.freeboard.io/fetch/',
+                'https://corsproxy.io/?'
+            ];
+
+            for (var i = 0; i < proxyServices.length; i++) {
+                var proxyUrl = proxyServices[i] + encodeURIComponent(url);
+                try {
+                    var response = await fetch(proxyUrl, { mode: 'cors' });
+                    if (!response.ok) {
+                        throw new Error('Proxy responded ' + response.status);
+                    }
+                    var text = await response.text();
+                    if (text && text.length) {
+                        return text;
+                    }
+                } catch (e) {
+                    console.warn('Proxy service failed:', proxyServices[i], e);
+                }
+            }
+            throw new Error('All proxy services failed');
+        }
+        // Game Library Logic
+        var gamesList = [];
+        var GAME_METADATA_URL = 'games/manifest.json';
+        var ZONES_METADATA_URL = 'zones.json';
+        var HTML_ROOT = 'games';
+        var COVER_ROOT = 'gamecovers';
+
+        // Initialize Poki SDK
+        if (typeof PokiSDK !== 'undefined') {
+            try {
+                PokiSDK.init();
+                console.log('Poki SDK initialized successfully');
+            } catch (e) {
+                console.warn('Poki SDK initialization error:', e);
+            }
+        } else {
+            console.log('Poki SDK not yet available, will retry on page load');
+        }
+
+        // Retry Poki initialization on document ready
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof PokiSDK !== 'undefined' && !window.pokiInitialized) {
+                try {
+                    PokiSDK.init();
+                    window.pokiInitialized = true;
+                    console.log('Poki SDK initialized on DOMContentLoaded');
+                } catch (e) {
+                    console.warn('Poki SDK DOMContentLoaded error:', e);
+                }
+            }
+            initGames();
+        });
+
+        // Handle postMessage communication from iframes to relay Poki SDK calls
+        window.addEventListener('message', function(event) {
+            try {
+                if (event.data && event.data.type && event.data.type.startsWith('poki:')) {
+                    var method = event.data.type.substring(5);
+                    var args = event.data.args || [];
+                    var id = event.data.id;
+                    
+                    if (typeof PokiSDK !== 'undefined' && typeof PokiSDK[method] === 'function') {
+                        try {
+                            var result = PokiSDK[method].apply(PokiSDK, args);
+                            
+                            // Handle promises
+                            if (result && typeof result.then === 'function') {
+                                result.then(function(response) {
+                                    if (event.source) {
+                                        event.source.postMessage({
+                                            type: 'poki-response:' + method,
+                                            id: id,
+                                            success: true,
+                                            data: response
+                                        }, event.origin);
+                                    }
+                                }).catch(function(error) {
+                                    if (event.source) {
+                                        event.source.postMessage({
+                                            type: 'poki-response:' + method,
+                                            id: id,
+                                            success: false,
+                                            error: String(error)
+                                        }, event.origin);
+                                    }
+                                });
+                            } else {
+                                event.source.postMessage({
+                                    type: 'poki-response:' + method,
+                                    id: id,
+                                    success: true,
+                                    data: result
+                                }, event.origin);
+                            }
+                        } catch (e) {
+                            event.source.postMessage({
+                                type: 'poki-response:' + method,
+                                id: id,
+                                success: false,
+                                error: String(e)
+                            }, event.origin);
+                        }
+                    } else {
+                        console.warn('Poki SDK method not available:', method);
+                    }
+                }
+            } catch (e) {
+                console.warn('Error handling Poki SDK message:', e);
+            }
+        });
+
+        function resolvePlaceholders(value) {
+            if (!value || typeof value !== 'string') {
+                return value;
+            }
+            return value
+                .replace(/\{HTML_URL\}/g, HTML_ROOT)
+                .replace(/\{COVER_URL\}/g, COVER_ROOT);
+        }
+
+        function normalizeGame(game) {
+            return {
+                id: game.id || game.url,
+                name: game.name || game.id || game.url || 'Untitled',
+                url: resolvePlaceholders(game.url || 'about:blank'),
+                cover: resolvePlaceholders(game.cover || 'https://img.icons8.com/ios-filled/70/000000/game.png')
+            };
+        }
+
+        async function fetchGamesManifest() {
+            try {
+                var response = await fetch(GAME_METADATA_URL);
+                if (!response.ok) {
+                    throw new Error('Failed to load game manifest');
+                }
+                var manifest = await response.json();
+                return Array.isArray(manifest) ? manifest : [];
+            } catch (e) {
+                console.warn('Could not load game manifest:', e);
+                return [];
+            }
+        }
+
+        async function loadZonesData() {
+            try {
+                var response = await fetch(ZONES_METADATA_URL);
+                if (!response.ok) {
+                    throw new Error('Failed to load zones metadata');
+                }
+                var zones = await response.json();
+                return Array.isArray(zones) ? zones : [];
+            } catch (e) {
+                console.warn('Could not load zones metadata:', e);
+                return [];
+            }
+        }
+
+        function applyZoneMetadata(game, zone) {
+            if (!zone) {
+                return game;
+            }
+            var name = zone.name || game.name;
+            var cover = resolvePlaceholders(zone.cover || game.cover);
+            return {
+                id: game.id,
+                name: name,
+                url: game.url,
+                cover: cover
+            };
+        }
+
+        function filterGames(searchText) {
+            var buttons = document.querySelectorAll('.game-button');
+            searchText = searchText.toLowerCase();
+
+            buttons.forEach(function(btn) {
+                var gameName = btn.getAttribute('data-game-name');
+                if (gameName && gameName.includes(searchText)) {
+                    btn.style.display = '';
+                } else {
+                    btn.style.display = 'none';
+                }
+            });
+        }
+
+        function getPlayableUrl(game) {
+            if (!game || !game.url) {
+                return 'about:blank';
+            }
+            return game.url;
+        }
+
+        function openGame(game) {
+            var url = getPlayableUrl(game);
+            loadGame(url);
+        }
+
+        async function initGames() {
+            var loading = document.getElementById('games-loading');
+            var grid = document.getElementById('games-grid');
+            var searchContainer = document.getElementById('games-search-container');
+            if (!grid || !loading) return;
+
+            loading.style.display = 'flex';
+            grid.style.display = 'none';
+            searchContainer.style.display = 'none';
+
+            try {
+                console.log('initGames called');
+                var manifestGames = await fetchGamesManifest();
+                var zoneGames = await loadZonesData();
+
+                var zoneMap = new Map();
+                zoneGames.forEach(function(zone) {
+                    if (zone && zone.url) {
+                        zoneMap.set(resolvePlaceholders(zone.url), zone);
+                    }
+                });
+
+                gamesList = manifestGames.map(function(game) {
+                    var normalized = normalizeGame(game);
+                    var zone = zoneMap.get(normalized.url);
+                    return applyZoneMetadata(normalized, zone);
+                });
+                console.log('gamesList length after manifest and zones merge:', gamesList.length);
+
+                loading.style.display = 'none';
+                grid.style.display = 'grid';
+                searchContainer.style.display = gamesList.length ? 'block' : 'none';
+                grid.innerHTML = '';
+
+                if (!gamesList.length) {
+                    grid.innerHTML = '<div class="text-gray-400">No local games found in the games folder.</div>';
+                } else {
+                    gamesList.forEach(function(game) {
+                        console.log('Creating button for game:', game.id, game.name);
+                        var btn = document.createElement('div');
+                        btn.className = 'game-button';
+                        btn.setAttribute('data-game-name', (game.name || '').toLowerCase());
+
+                        var div = document.createElement('div');
+                        div.className = 'game-icon';
+                        var img = document.createElement('img');
+                        img.src = game.cover;
+                        img.alt = game.name || 'Game';
+                        img.style.width = '70px';
+                        img.style.height = '70px';
+                        img.style.borderRadius = '8px';
+                        img.style.objectFit = 'cover';
+                        img.onerror = function() { this.src = 'https://img.icons8.com/ios-filled/70/000000/game.png'; };
+                        div.appendChild(img);
+                        btn.appendChild(div);
+
+                        var span = document.createElement('span');
+                        span.textContent = game.name || 'Untitled';
+                        span.className = 'game-name';
+                        btn.appendChild(span);
+
+                        btn.onclick = function() { openGame(game); };
+                        grid.appendChild(btn);
+                    });
+                }
+
+                console.log('Games loaded successfully');
+            } catch (e) {
+                console.error('Error in initGames:', e);
+                loading.style.display = 'none';
+                grid.style.display = 'grid';
+                searchContainer.style.display = 'block';
+                grid.innerHTML = 'Error loading games: ' + e.message;
+            }
+        }
+
+        function loadGame(url) {
+            var grid = document.getElementById('games-grid');
+            var viewer = document.getElementById('game-viewer');
+            var backBtn = document.getElementById('back-to-grid');
+            var fsBtn = document.getElementById('fullscreen-btn');
+
+            grid.style.display = 'none';
+            viewer.src = url;
+            viewer.style.display = 'block';
+            backBtn.style.display = 'block';
+            fsBtn.style.display = 'flex';
+        }
+
+        function showGamesGrid() {
+            var grid = document.getElementById('games-grid');
+            var viewer = document.getElementById('game-viewer');
+            var backBtn = document.getElementById('back-to-grid');
+            var fsBtn = document.getElementById('fullscreen-btn');
+
+            grid.style.display = 'grid';
+            viewer.src = 'about:blank';
+            viewer.style.display = 'none';
+            viewer.onload = null;
+            backBtn.style.display = 'none';
+            fsBtn.style.display = 'none';
+        }
+
+        function fullscreenGame() {
+            var viewer = document.getElementById('game-viewer');
+            if (viewer.requestFullscreen) {
+                viewer.requestFullscreen();
+            } else if (viewer.webkitRequestFullscreen) {
+                viewer.webkitRequestFullscreen();
+            } else if (viewer.mozRequestFullScreen) {
+                viewer.mozRequestFullScreen();
+            } else if (viewer.msRequestFullscreen) {
+                viewer.msRequestFullscreen();
+            }
+        }
+
+        function cloakTab() {
+            var cloakSelect = document.getElementById('cloak-select');
+            var type = cloakSelect ? cloakSelect.value : 'about:blank';
+            var url = window.location.href;
+
+            if (type === 'about:blank') {
+                var win = window.open('about:blank', '_blank');
+                if (win) {
+                    win.document.body.style.margin = '0';
+                    win.document.body.style.height = '100vh';
+                    var iframe = win.document.createElement('iframe');
+                    iframe.style.border = 'none';
+                    iframe.style.width = '100%';
+                    iframe.style.height = '100%';
+                    iframe.style.margin = '0';
+                    iframe.src = url;
+                    win.document.body.appendChild(iframe);
+                    window.location.replace('https://google.com');
+                }
+            } else if (type === 'blob:null') {
+                var html = '<!DOCTYPE html><html><body style="margin:0;padding:0;overflow:hidden;"><iframe src="' + url + '" style="border:none;width:100vw;height:100vh;"></iframe></body></html>';
+                var blob = new Blob([html], {type: 'text/html'});
+                var blobUrl = URL.createObjectURL(blob);
+                var win2 = window.open(blobUrl, '_blank');
+                if (win2) {
+                    window.location.replace('https://google.com');
+                }
+            }
+        }
+
+        window.onload = setRandomText;
+
+    //]]>
+    </script>
+    
+</body>
+</html>

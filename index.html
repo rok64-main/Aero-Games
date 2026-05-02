@@ -6,6 +6,7 @@
     <title>AeroProx</title>
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
     <script type="text/javascript" src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script type="text/javascript" src="gnmathassets/poki-sdk-core-v2.234.2.js"></script>
     <script type="text/javascript" src="gnmathassets/poki-sdk.js"></script>
     <style type="text/css">
@@ -692,12 +693,6 @@
 
 <!-- ── Games ── -->
             <div id="section-games" class="section">
-                <div id="games-notice" class="p-3 mb-4 rounded-lg bg-amber-900/40 border border-amber-600/50" style="display:none; position:relative;">
-                    <p class="text-amber-200 text-sm">
-                        <strong>Note:</strong> If you see some game zones have no icon and named "101.html" that means something is broken, so just ignore it, and yes, it still has the game working.
-                    </p>
-                    <button onclick="dismissGamesNotice()" class="absolute top-2 right-2 text-amber-300 hover:text-white text-lg font-bold">&times;</button>
-                </div>
                 <div class="flex justify-between items-center mb-4 pb-2"
                      style="border-bottom: 1px solid rgba(255,255,255,0.05);">
                     <h2 class="section-title" style="margin-bottom:0; border-bottom:0; padding-bottom:0;">
@@ -861,19 +856,6 @@
                     targetBtn.style.display = 'flex';
                 }
             }
-
-// Show notice when navigating to games
-            var gamesNotice = document.getElementById('games-notice');
-            if (gamesNotice) {
-                gamesNotice.style.display = (id === 'games') ? 'block' : 'none';
-            }
-        }
-
-        function dismissGamesNotice() {
-            var notice = document.getElementById('games-notice');
-            if (notice) {
-                notice.style.display = 'none';
-            }
         }
 
         /* ── Random tagline ── */
@@ -935,25 +917,14 @@
             if (!frame) return;
 
             revokeProxyBlob(frame);
-            frame.src = 'about:blank';
             frame.srcdoc = '<div style="min-height:100%;display:flex;align-items:center;' +
                            'justify-content:center;color:#fff;font-family:system-ui,sans-serif;' +
-                           'font-size:1rem;">Loading private proxy...</div>';
+                           'font-size:1rem;">Loading Scramjet proxy...</div>';
 
-            try {
-                var html    = await fetchViaProxy(url);
-                var proxyDoc = injectBaseTag(html, url);
-                var blob    = new Blob([proxyDoc], { type: 'text/html' });
-                var blobUrl = URL.createObjectURL(blob);
-
-                frame._proxyBlobUrl = blobUrl;
-                frame.srcdoc = '';
-                frame.src    = blobUrl;
-            } catch (error) {
-                console.warn('Proxy fetch failed, falling back to direct load:', error);
-                frame.srcdoc = '';
-                frame.src    = url;
-            }
+            // Use Scramjet proxy directly
+            var proxyUrl = 'http://localhost:4141/?url=' + encodeURIComponent(url);
+            frame.srcdoc = '';
+            frame.src = proxyUrl;
         }
 
         /* ── YouTube: search ── */
@@ -1229,23 +1200,21 @@
         }
 
         async function fetchViaProxy(url) {
+            // Using local Scramjet instance - run 'pnpm dev' from the cloned repo at https://github.com/MercuryWorkshop/scramjet
             var services = [
-                'https://api.allorigins.win/raw?url=',
-                'https://thingproxy.freeboard.io/fetch/',
-                'https://corsproxy.io/?'
+                'http://localhost:4141/?url='
             ];
 
             for (var i = 0; i < services.length; i++) {
                 try {
-                    var response = await fetch(services[i] + encodeURIComponent(url), { mode: 'cors' });
-                    if (!response.ok) throw new Error('Proxy responded ' + response.status);
-                    var text = await response.text();
+                    var response = await axios.get(services[i] + encodeURIComponent(url), { timeout: 20000 });
+                    var text = response.data;
                     if (text && text.length) return text;
                 } catch (e) {
                     console.warn('Proxy service failed:', services[i], e);
                 }
             }
-            throw new Error('All proxy services failed');
+            throw new Error('Scramjet proxy failed - ensure local server is running');
         }
 
 /* ── Games ── */
@@ -1318,9 +1287,8 @@
 
         async function fetchGamesManifest() {
             try {
-                var res = await fetch(GAME_METADATA_URL);
-                if (!res.ok) throw new Error('Failed to load game manifest');
-                var data = await res.json();
+                var response = await axios.get(GAME_METADATA_URL, { timeout: 5000 });
+                var data = response.data;
                 return Array.isArray(data) ? data : [];
             } catch (e) {
                 console.warn('Could not load game manifest:', e);
@@ -1330,9 +1298,8 @@
 
         async function loadZonesData() {
             try {
-                var res = await fetch(ZONES_METADATA_URL);
-                if (!res.ok) throw new Error('Failed to load zones metadata');
-                var data = await res.json();
+                var response = await axios.get(ZONES_METADATA_URL, { timeout: 5000 });
+                var data = response.data;
                 return Array.isArray(data) ? data : [];
             } catch (e) {
                 console.warn('Could not load zones metadata:', e);

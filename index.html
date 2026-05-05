@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AeroGames</title>
-    <link rel="icon" type="image/x-icon" href="favicon.ico" />
-    <script type="text/javascript" src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script type="text/javascript" src="gnmathassets/poki-sdk-core-v2.234.2.js"></script>
-    <script type="text/javascript" src="gnmathassets/poki-sdk.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <script src="gnmathassets/poki-sdk-core-v2.234.2.js"></script>
+    <script src="gnmathassets/poki-sdk.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style type="text/css">
         body {
             background-color: #000000;
@@ -155,6 +155,84 @@
             margin-bottom: 2rem;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             padding-bottom: 1rem;
+        }
+
+        .section-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .section-title-flat {
+            margin-bottom: 0;
+            border-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        #games-search-container {
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        #games-search-input {
+            width: 100%;
+            max-width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+            padding: 0.75rem;
+            color: #fff;
+            font-size: 0.9rem;
+        }
+
+        #games-grid {
+            display: grid;
+        }
+
+        #game-viewer {
+            display: none;
+        }
+
+        #game-controls {
+            display: none;
+            align-items: center;
+            gap: 0.75rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        #back-to-grid {
+            display: none;
+        }
+
+        .muted-note {
+            color: #888;
+            margin-top: 0.5rem;
+        }
+
+        .privacy-scroll {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .privacy-copy {
+            color: #ccc;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .privacy-heading {
+            margin-top: 1.5rem;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .privacy-list {
+            margin-left: 1.5rem;
         }
 
         /* ── Search ── */
@@ -455,7 +533,7 @@
     <!-- Header with Navigation -->
     <div class="header">
         <div class="header-left">
-            <img src="aerogames.png" alt="AeroGames" class="header-logo" />
+            <img src="aerogames.png" alt="AeroGames" class="header-logo">
             <h1 class="header-title">AeroGames</h1>
         </div>
 
@@ -505,24 +583,19 @@
 
             <!-- ── Games ── -->
             <div id="section-games" class="section">
-                <div class="flex justify-between items-center mb-4 pb-2"
-                     style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                    <h2 class="section-title" style="margin-bottom:0; border-bottom:0; padding-bottom:0;">
+                <div class="section-row">
+                    <h2 class="section-title section-title-flat">
                         Games [From GN-Math]
                     </h2>
                 </div>
 
-                <div id="games-search-container" style="margin-bottom:1rem; display:none;">
+                <div id="games-search-container">
                     <input
                         type="text"
                         id="games-search-input"
                         class="search-input"
                         placeholder="Search games..."
-                        style="width:100%; max-width:100%; background:rgba(255,255,255,0.05);
-                               border:1px solid rgba(255,255,255,0.1); border-radius:8px;
-                               padding:0.75rem; color:#fff; font-size:0.9rem;"
-                        oninput="filterGames(this.value)"
-                    />
+                        oninput="filterGames(this.value)">
                 </div>
 
                 <div id="games-loading" class="flex-1 flex items-center justify-center">
@@ -532,7 +605,7 @@
                     </div>
                 </div>
 
-                <div id="games-grid" class="flex-1" style="display:grid;">
+                <div id="games-grid" class="flex-1">
                     <!-- Game buttons injected here -->
                 </div>
 
@@ -540,7 +613,6 @@
                     id="game-viewer"
                     src="about:blank"
                     class="game-frame"
-                    style="display:none;"
                     title="Game Viewer"
                     allowfullscreen=""
                     allow="autoplay; fullscreen; microphone; camera; geolocation;
@@ -551,13 +623,12 @@
                              allow-downloads allow-presentation">
                 </iframe>
 
-                <div id="game-controls" style="display:none; align-items:center; gap:0.75rem; justify-content:center; margin-top:1rem;">
-                    <button id="back-to-grid" onclick="showGamesGrid()"
-                            class="text-xs text-gray-500 hover:text-white transition-colors"
-                            style="display:none;">
+                <div id="game-controls">
+                    <button id="back-to-grid" type="button" onclick="showGamesGrid()"
+                            class="text-xs text-gray-500 hover:text-white transition-colors">
                         Back to Library
                     </button>
-                    <button id="fullscreen-btn" onclick="fullscreenGame()">
+                    <button id="fullscreen-btn" type="button" onclick="fullscreenGame()">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
                              viewBox="0 0 24 24" fill="none" stroke="currentColor"
                              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -568,7 +639,7 @@
                         </svg>
                         Fullscreen
                     </button>
-                    <button id="newtab-btn" onclick="openGameInNewTab()">
+                    <button id="newtab-btn" type="button" onclick="openGameInNewTab()">
                         <i class="fas fa-external-link-alt"></i> New Tab
                     </button>
                 </div>
@@ -587,7 +658,7 @@
                                 <option value="about:blank">about:blank</option>
                                 <option value="blob:null">blob:null</option>
                             </select>
-                            <button onclick="cloakTab()" class="settings-btn w-fit">Enable Cloak</button>
+                            <button type="button" onclick="cloakTab()" class="settings-btn w-fit">Enable Cloak</button>
                         </div>
                         <p class="text-xs text-gray-500 mt-4">Hides this site in a new invisible tab for privacy.</p>
                     </div>
@@ -606,7 +677,7 @@
                                   font-semibold transition inline-flex items-center justify-center"
                            aria-label="Join Discord Server">
                             <img src="https://cdn.simpleicons.org/discord/white"
-                                 width="20" height="20" alt="Discord" />
+                                 width="20" height="20" alt="Discord">
                         </a>
                     </div>
                 </div>
@@ -619,7 +690,7 @@
                     <div class="p-6 rounded-xl bg-white/5 border border-white/5">
                         <p class="text-blue-400 text-sm font-bold uppercase tracking-wider mb-1">Version 1.0</p>
                         <p class="text-2xl font-bold">Release</p>
-                        <p style="color:#888; margin-top:0.5rem;">Everything here right now</p>
+                        <p class="muted-note">Everything here right now</p>
                     </div>
                 </div>
             </div>
@@ -631,7 +702,7 @@
                     <div class="p-6 rounded-xl bg-white/5 border border-white/5">
                         <p class="text-blue-400 text-sm font-bold uppercase tracking-wider mb-1">AeroGames Owner</p>
                         <p class="text-2xl font-bold">Rok64</p>
-                        <p style="color:#888; margin-top:0.5rem;">Owner &amp; Developer</p>
+                        <p class="muted-note">Owner &amp; Developer</p>
                     </div>
                 </div>
             </div>
@@ -639,26 +710,26 @@
             <!-- ── Privacy Policy ── -->
             <div id="section-privacy" class="section">
                 <h2 class="section-title">Privacy Policy</h2>
-                <div class="space-y-6" style="max-height: 500px; overflow-y: auto;">
+                <div class="space-y-6 privacy-scroll">
                     <div class="p-6 rounded-xl bg-white/5 border border-white/5">
                         <h3 class="text-lg font-bold mb-4">Privacy Policy</h3>
-                        <div style="color: #ccc; font-size: 0.95rem; line-height: 1.6;">
+                        <div class="privacy-copy">
                             <p><strong>Last Updated: May 2, 2026</strong></p>
 
-                            <h4 style="margin-top: 1.5rem; font-weight: bold; color: #fff;">1. Introduction</h4>
+                            <h4 class="privacy-heading">1. Introduction</h4>
                             <p>AeroGames ("we", "our", or "us") operates the AeroGames website. This page informs you of our policies regarding the collection, use, and disclosure of personal data when you use our service and the choices you have associated with that data.</p>
 
-                            <h4 style="margin-top: 1.5rem; font-weight: bold; color: #fff;">2. Information Collection and Use</h4>
+                            <h4 class="privacy-heading">2. Information Collection and Use</h4>
                             <p>We collect several different types of information for various purposes to provide and improve our service to you:</p>
-                            <ul style="margin-left: 1.5rem;">
+                            <ul class="privacy-list">
                                 <li><strong>Personal Data:</strong> We may collect personally identifiable information such as your name, email address, and preferences when you voluntarily provide them.</li>
                                 <li><strong>Usage Data:</strong> We automatically collect information about how you interact with our service, including browser type, IP address, pages visited, and timestamps.</li>
                                 <li><strong>Cookies:</strong> We use cookies and similar technologies to enhance your experience and analyze usage patterns.</li>
                             </ul>
 
-                            <h4 style="margin-top: 1.5rem; font-weight: bold; color: #fff;">3. Use of Data</h4>
+                            <h4 class="privacy-heading">3. Use of Data</h4>
                             <p>AeroGames uses the collected data for various purposes:</p>
-                            <ul style="margin-left: 1.5rem;">
+                            <ul class="privacy-list">
                                 <li>To provide and maintain our service</li>
                                 <li>To notify you about changes to our service</li>
                                 <li>To allow you to participate in interactive features</li>
@@ -668,13 +739,13 @@
                                 <li>To detect, prevent, and address technical and security issues</li>
                             </ul>
 
-                            <h4 style="margin-top: 1.5rem; font-weight: bold; color: #fff;">4. Security of Data</h4>
+                            <h4 class="privacy-heading">4. Security of Data</h4>
                             <p>The security of your data is important to us but remember that no method of transmission over the Internet is 100% secure. While we strive to use commercially acceptable means to protect your Personal Data, we cannot guarantee its absolute security.</p>
 
-                            <h4 style="margin-top: 1.5rem; font-weight: bold; color: #fff;">5. Changes to This Privacy Policy</h4>
+                            <h4 class="privacy-heading">5. Changes to This Privacy Policy</h4>
                             <p>We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last Updated" date at the top of this Privacy Policy.</p>
 
-                            <h4 style="margin-top: 1.5rem; font-weight: bold; color: #fff;">6. Contact Us</h4>
+                            <h4 class="privacy-heading">6. Contact Us</h4>
                             <p>If you have any questions about this Privacy Policy, please contact us through our Discord server or other official channels.</p>
                         </div>
                     </div>
@@ -684,7 +755,7 @@
         </div>
     </div>
 
-    <script type="text/javascript">
+    <script>
     //<![CDATA[
 
         /* ── Navigation ── */

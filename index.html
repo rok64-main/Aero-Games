@@ -12,6 +12,18 @@
     <script src="gnmathassets/poki-sdk-core-v2.234.2.js"></script>
     <script src="gnmathassets/poki-sdk.js"></script>
     <style type="text/css">
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        html {
+            width: 100%;
+            min-height: 100%;
+            overflow-x: hidden;
+        }
+
         body {
             background-color: #000000;
             background-image:
@@ -23,9 +35,12 @@
             margin: 0;
             padding: 0;
             height: 100vh;
+            min-height: 100dvh;
+            width: 100%;
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            overflow-x: hidden;
             animation: none;
         }
 
@@ -41,12 +56,14 @@
             padding: 0.75rem 2rem;
             flex-shrink: 0;
             gap: 2rem;
+            min-width: 0;
         }
 
         .header-left {
             display: flex;
             align-items: center;
             gap: 0.75rem;
+            min-width: 0;
         }
 
         .header-logo {
@@ -64,6 +81,7 @@
             margin: 0;
             letter-spacing: -0.05em;
             color: #fff;
+            white-space: nowrap;
         }
 
         /* ── Navigation ── */
@@ -73,6 +91,9 @@
             gap: 0.5rem;
             flex: 1;
             justify-content: center;
+            min-width: 0;
+            overflow-x: auto;
+            scrollbar-width: thin;
         }
 
         .nav-link {
@@ -88,6 +109,7 @@
             align-items: center;
             gap: 0.4rem;
             white-space: nowrap;
+            flex: 0 0 auto;
         }
 
         .nav-link svg,
@@ -121,6 +143,7 @@
             padding: 2rem;
             width: 100%;
             box-sizing: border-box;
+            min-height: 0;
         }
 
         .content-card {
@@ -134,6 +157,8 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            min-height: 0;
+            min-width: 0;
         }
 
         /* ── Sections ── */
@@ -142,6 +167,9 @@
             height: 100%;
             width: 100%;
             animation: fadeIn 0.4s ease-out;
+            min-height: 0;
+            min-width: 0;
+            overflow: hidden;
         }
 
         .section.active {
@@ -530,6 +558,7 @@
         .game-frame {
             width: 100%;
             flex: 1;
+            min-height: 420px;
             border: none;
             border-radius: 12px;
             background: #000;
@@ -670,6 +699,171 @@
             font-size: 0.75rem;
             color: #444;
             white-space: nowrap;
+        }
+
+        @media (max-width: 900px) {
+            body {
+                overflow: auto;
+            }
+
+            .header {
+                align-items: flex-start;
+                flex-wrap: wrap;
+                gap: 0.75rem;
+                padding: 0.75rem 1rem;
+            }
+
+            .header-left {
+                flex: 1 1 auto;
+            }
+
+            .nav-container {
+                order: 3;
+                flex: 1 0 100%;
+                justify-content: flex-start;
+                padding-bottom: 0.15rem;
+            }
+
+            .header-footer {
+                padding-top: 0.35rem;
+            }
+
+            .main-view {
+                padding: 1rem;
+            }
+
+            .content-card {
+                padding: 1.25rem;
+                overflow: auto;
+            }
+
+            .text-7xl {
+                font-size: 3.2rem;
+            }
+
+            #games-grid {
+                grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
+                gap: 0.75rem;
+            }
+
+            .game-frame {
+                min-height: min(62dvh, 560px);
+            }
+        }
+
+        @media (max-width: 560px) {
+            .header {
+                padding: 0.65rem 0.75rem;
+            }
+
+            .header-logo {
+                width: 28px;
+                height: 28px;
+            }
+
+            .header-title {
+                font-size: 1.15rem;
+            }
+
+            .header-footer {
+                display: none;
+            }
+
+            .nav-link {
+                padding: 0.45rem 0.6rem;
+                font-size: 0.8rem;
+            }
+
+            .main-view {
+                padding: 0.75rem;
+            }
+
+            .content-card {
+                padding: 0.75rem;
+            }
+
+            .section {
+                overflow: auto;
+            }
+
+            .section-title {
+                font-size: 1.35rem;
+                margin-bottom: 1rem;
+            }
+
+            .section-row {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .text-7xl {
+                font-size: 2.45rem;
+            }
+
+            #games-grid {
+                grid-template-columns: repeat(auto-fill, minmax(86px, 1fr));
+                gap: 0.55rem;
+            }
+
+            .game-button {
+                padding: 0.5rem 0.25rem;
+            }
+
+            .game-icon {
+                width: 70px;
+                height: 70px;
+            }
+
+            .game-button img {
+                width: 70px !important;
+                height: 70px !important;
+            }
+
+            .game-name {
+                font-size: 0.65rem;
+                white-space: normal;
+                min-height: 2.35em;
+            }
+
+            .game-frame {
+                border-radius: 8px;
+                min-height: 58dvh;
+            }
+
+            #game-controls {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+
+            #fullscreen-btn,
+            #newtab-btn,
+            .settings-btn {
+                min-height: 38px;
+            }
+
+            .p-6 {
+                padding: 1rem;
+            }
+
+            .privacy-scroll {
+                max-height: none;
+            }
+        }
+
+        @media (max-width: 360px) {
+            #games-grid {
+                grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+            }
+
+            .game-icon,
+            .game-button img {
+                width: 62px !important;
+                height: 62px !important;
+            }
+
+            .nav-link {
+                font-size: 0.75rem;
+            }
         }
 
         @keyframes backgroundShift {
@@ -882,7 +1076,7 @@
                     allowfullscreen=""
                     allow="autoplay; fullscreen; microphone; camera; geolocation;
                            gyroscope; accelerometer; magnetometer; xr-spatial-tracking;
-                           gamepad; microphone; camera"
+                           gamepad; microphone; camera; unload"
                     sandbox="allow-same-origin allow-scripts allow-popups allow-forms
                              allow-pointer-lock allow-top-navigation allow-modals
                              allow-downloads allow-presentation">
@@ -1248,6 +1442,8 @@
             var controls = document.getElementById('game-controls');
 
             grid.style.display     = 'none';
+            applyIframePermissions(viewer);
+            delete viewer.dataset.autoReloadedFor;
             viewer.src             = url;
             viewer.style.display   = 'block';
             controls.style.display = 'flex';
@@ -1277,14 +1473,128 @@
             if (req) req.call(viewer);
         }
 
+        var iframeAllowPolicy = 'autoplay; fullscreen; microphone; camera; geolocation; ' +
+                                'gyroscope; accelerometer; magnetometer; xr-spatial-tracking; ' +
+                                'gamepad; unload';
+        var iframeSandboxPolicy = 'allow-same-origin allow-scripts allow-popups allow-forms ' +
+                                  'allow-pointer-lock allow-top-navigation allow-modals ' +
+                                  'allow-downloads allow-presentation';
+
+        function applyIframePermissions(iframe) {
+            iframe.setAttribute('allow', iframeAllowPolicy);
+            iframe.setAttribute('sandbox', iframeSandboxPolicy);
+            iframe.allowFullscreen = true;
+            armIframeUnloadMessage(iframe);
+        }
+
+        function armIframeUnloadMessage(iframe) {
+            if (iframe.dataset.unloadMessageArmed === 'true') return;
+            iframe.dataset.unloadMessageArmed = 'true';
+            iframe.addEventListener('load', function() {
+                resetIframePromptState(iframe);
+                addUnloadMessageToFrame(iframe);
+                autoReloadIframeOnce(iframe);
+            });
+        }
+
+        function autoReloadIframeOnce(iframe) {
+            var currentUrl = iframe.currentSrc || iframe.src;
+            if (!currentUrl || currentUrl === 'about:blank') return;
+            if (iframe.dataset.autoReloadedFor === currentUrl) return;
+
+            iframe.dataset.autoReloadedFor = currentUrl;
+            setTimeout(function() {
+                try {
+                    if (iframe.contentWindow) {
+                        iframe.contentWindow.location.reload();
+                        return;
+                    }
+                } catch (e) {}
+
+                iframe.src = currentUrl;
+            }, 100);
+        }
+
+        function resetIframePromptState(iframe) {
+            iframe.dataset.promptSession = String(Date.now());
+            iframe.dataset.promptActive = 'false';
+
+            try {
+                var frameDocument = iframe.contentDocument;
+                var frameWindow = iframe.contentWindow;
+                if (!frameDocument) return;
+
+                if (frameWindow) {
+                    frameWindow.__aeroPromptSession = iframe.dataset.promptSession;
+                    frameWindow.__aeroPromptActive = false;
+                }
+
+                frameDocument.querySelectorAll('dialog[open]').forEach(function(dialog) {
+                    if (typeof dialog.close === 'function') {
+                        dialog.close();
+                    }
+                    dialog.removeAttribute('open');
+                    dialog.hidden = true;
+                });
+
+                var promptSelectors = [
+                    '[role="dialog"]',
+                    '[aria-modal="true"]',
+                    '.modal',
+                    '.overlay',
+                    '.popup',
+                    '.prompt',
+                    '.prompt-overlay',
+                    '.dialog',
+                    '.toast',
+                    '.notification',
+                    '.alert',
+                    '.swal2-container'
+                ].join(',');
+
+                frameDocument.querySelectorAll(promptSelectors).forEach(function(el) {
+                    el.classList.remove('active', 'open', 'opened', 'show', 'shown', 'visible', 'is-active', 'is-open');
+                    el.setAttribute('aria-hidden', 'true');
+                    el.hidden = true;
+                    el.style.display = 'none';
+                });
+
+                frameDocument.documentElement.classList.remove('modal-open', 'overlay-open', 'prompt-open');
+                frameDocument.body.classList.remove('modal-open', 'overlay-open', 'prompt-open');
+                frameDocument.body.style.overflow = '';
+            } catch (e) {
+                // Cross-origin iframe content cannot be reset from the parent page.
+            }
+        }
+
+        function addUnloadMessageToFrame(iframe) {
+            try {
+                var frameWindow = iframe.contentWindow;
+                if (!frameWindow || frameWindow.__aeroUnloadMessageAttached) return;
+
+                frameWindow.__aeroUnloadMessageAttached = true;
+                frameWindow.addEventListener('beforeunload', function(e) {
+                    resetIframePromptState(iframe);
+                    return beforeUnloadHandler(e);
+                });
+                frameWindow.addEventListener('unload', function() {
+                    resetIframePromptState(iframe);
+                });
+            } catch (e) {
+                // Cross-origin frames cannot be modified after load, but the allow policy is still present.
+            }
+        }
+
         function openGameInNewTab() {
             var viewer = document.getElementById('game-viewer');
             var url    = viewer.src;
             var win    = window.open('about:blank', '_blank');
             if (win) {
                 win.document.body.style.cssText = 'margin:0;height:100vh;';
+                win.addEventListener('beforeunload', beforeUnloadHandler);
                 var iframe = win.document.createElement('iframe');
                 iframe.style.cssText = 'border:none;width:100%;height:100%;margin:0;';
+                applyIframePermissions(iframe);
                 iframe.src = url;
                 win.document.body.appendChild(iframe);
             }
@@ -1300,15 +1610,29 @@
                 var win = window.open('about:blank', '_blank');
                 if (win) {
                     win.document.body.style.cssText = 'margin:0;height:100vh;';
+                    win.addEventListener('beforeunload', beforeUnloadHandler);
                     var iframe = win.document.createElement('iframe');
                     iframe.style.cssText = 'border:none;width:100%;height:100%;margin:0;';
+                    applyIframePermissions(iframe);
                     iframe.src = url;
                     win.document.body.appendChild(iframe);
                     window.location.replace('https://google.com');
                 }
             } else if (type === 'blob:null') {
                 var html = '<!DOCTYPE html><html><body style="margin:0;padding:0;overflow:hidden;">' +
-                           '<iframe src="' + url + '" style="border:none;width:100vw;height:100vh;"></iframe>' +
+                           '<iframe id="cloak-frame" src="' + url + '" style="border:none;width:100vw;height:100vh;" ' +
+                           'allow="' + iframeAllowPolicy + '" sandbox="' + iframeSandboxPolicy + '" allowfullscreen></iframe>' +
+                           '<script>' +
+                           'var f=document.getElementById("cloak-frame");' +
+                           'function h(e){var m="Leave site? Changes you made may not be saved.";e.preventDefault();e.returnValue=m;return m;}' +
+                           'function r(){try{var d=f.contentDocument,w=f.contentWindow;if(!d)return;f.dataset.promptSession=String(Date.now());f.dataset.promptActive="false";if(w){w.__aeroPromptSession=f.dataset.promptSession;w.__aeroPromptActive=false;}d.querySelectorAll("dialog[open]").forEach(function(x){if(typeof x.close==="function"){x.close();}x.removeAttribute("open");x.hidden=true;});d.querySelectorAll("[role=dialog],[aria-modal=true],.modal,.overlay,.popup,.prompt,.prompt-overlay,.dialog,.toast,.notification,.alert,.swal2-container").forEach(function(x){x.classList.remove("active","open","opened","show","shown","visible","is-active","is-open");x.setAttribute("aria-hidden","true");x.hidden=true;x.style.display="none";});d.documentElement.classList.remove("modal-open","overlay-open","prompt-open");d.body.classList.remove("modal-open","overlay-open","prompt-open");d.body.style.overflow="";}catch(e){}}' +
+                           'function q(){var u=f.currentSrc||f.src;if(!u||u==="about:blank"||f.dataset.autoReloadedFor===u)return;f.dataset.autoReloadedFor=u;setTimeout(function(){try{if(f.contentWindow){f.contentWindow.location.reload();return;}}catch(e){}f.src=u;},100);}' +
+                           'function a(){r();try{if(f.contentWindow&&!f.contentWindow.__aeroUnloadMessageAttached){f.contentWindow.__aeroUnloadMessageAttached=true;f.contentWindow.addEventListener("beforeunload",function(e){r();return h(e);});f.contentWindow.addEventListener("unload",r);}}catch(e){}q();}' +
+                           'f.addEventListener("load",a);' +
+                           'window.addEventListener("beforeunload",function(e){' +
+                           'var m="Leave site? Changes you made may not be saved.";e.preventDefault();e.returnValue=m;return m;' +
+                           '});' +
+                           '<\/script>' +
                            '</body></html>';
                 var blob    = new Blob([html], { type: 'text/html' });
                 var blobUrl = URL.createObjectURL(blob);

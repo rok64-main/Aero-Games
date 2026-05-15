@@ -34,12 +34,12 @@
             font-family: Arial, Helvetica, sans-serif;
             margin: 0;
             padding: 0;
-            height: 100vh;
+            min-height: 100vh;
             min-height: 100dvh;
             width: 100%;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            overflow-y: auto;
             overflow-x: hidden;
             animation: none;
         }
@@ -53,9 +53,9 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0.75rem 2rem;
+            padding: clamp(0.6rem, 1.5vw, 0.9rem) clamp(0.75rem, 3vw, 2rem);
             flex-shrink: 0;
-            gap: 2rem;
+            gap: clamp(0.65rem, 2vw, 2rem);
             min-width: 0;
         }
 
@@ -67,8 +67,8 @@
         }
 
         .header-logo {
-            width: 32px;
-            height: 32px;
+            width: clamp(28px, 4vw, 36px);
+            height: clamp(28px, 4vw, 36px);
             object-fit: contain;
             border-radius: 8px;
             background: rgba(255, 255, 255, 0.08);
@@ -76,7 +76,7 @@
         }
 
         .header-title {
-            font-size: 1.5rem;
+            font-size: clamp(1.1rem, 2.4vw, 1.5rem);
             font-weight: bold;
             margin: 0;
             letter-spacing: -0.05em;
@@ -97,12 +97,12 @@
         }
 
         .nav-link {
-            padding: 0.5rem 0.75rem;
+            padding: clamp(0.42rem, 1.1vw, 0.5rem) clamp(0.55rem, 1.4vw, 0.75rem);
             border-radius: 8px;
             color: #888;
             text-decoration: none;
             transition: all 0.3s ease;
-            font-size: 0.9rem;
+            font-size: clamp(0.75rem, 1.6vw, 0.9rem);
             cursor: pointer;
             border: 1px solid transparent;
             display: flex;
@@ -140,7 +140,7 @@
             display: flex;
             flex-direction: column;
             overflow: auto;
-            padding: 2rem;
+            padding: clamp(0.75rem, 3vw, 2rem);
             width: 100%;
             box-sizing: border-box;
             min-height: 0;
@@ -153,8 +153,8 @@
             -webkit-backdrop-filter: none;
             border: none;
             border-radius: 0;
-            padding: 2.5rem;
-            overflow: hidden;
+            padding: clamp(0.75rem, 3.5vw, 2.5rem);
+            overflow: visible;
             display: flex;
             flex-direction: column;
             min-height: 0;
@@ -164,12 +164,12 @@
         /* ── Sections ── */
         .section {
             display: none;
-            height: 100%;
+            min-height: 100%;
             width: 100%;
             animation: fadeIn 0.4s ease-out;
             min-height: 0;
             min-width: 0;
-            overflow: hidden;
+            overflow: visible;
         }
 
         .section.active {
@@ -183,9 +183,9 @@
         }
 
         .section-title {
-            font-size: 1.75rem;
+            font-size: clamp(1.25rem, 3vw, 1.75rem);
             font-weight: bold;
-            margin-bottom: 2rem;
+            margin-bottom: clamp(1rem, 3vw, 2rem);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             padding-bottom: 1rem;
         }
@@ -248,8 +248,8 @@
         }
 
         .privacy-scroll {
-            max-height: 500px;
-            overflow-y: auto;
+            max-height: none;
+            overflow-y: visible;
         }
 
         .privacy-copy {
@@ -309,7 +309,7 @@
         }
 
         .text-7xl {
-            font-size: 4.5rem;
+            font-size: clamp(2.4rem, 10vw, 4.5rem);
             line-height: 1;
         }
 
@@ -558,7 +558,7 @@
         .game-frame {
             width: 100%;
             flex: 1;
-            min-height: 420px;
+            min-height: clamp(360px, 62dvh, 720px);
             border: none;
             border-radius: 12px;
             background: #000;
@@ -593,9 +593,9 @@
 
         #games-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(125px, 1fr));
-            gap: 1rem;
-            overflow-y: auto;
+            grid-template-columns: repeat(auto-fill, minmax(clamp(82px, 14vw, 125px), 1fr));
+            gap: clamp(0.5rem, 1.8vw, 1rem);
+            overflow-y: visible;
             padding: 0.25rem 0.25rem 1rem 0.25rem;
             width: 100%;
             align-content: start;
@@ -605,7 +605,7 @@
             background: transparent;
             border: none;
             border-radius: 0;
-            padding: 0.7rem 0.5rem 0.6rem;
+            padding: clamp(0.45rem, 1.5vw, 0.7rem) clamp(0.25rem, 1vw, 0.5rem);
             text-align: center;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -626,7 +626,7 @@
             display: block;
             color: #ccc;
             text-align: center;
-            font-size: 0.7rem;
+            font-size: clamp(0.62rem, 1.5vw, 0.72rem);
             line-height: 1.2;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -641,8 +641,8 @@
 
         .game-icon {
             background: rgba(255, 255, 255, 0.05);
-            width: 85px;
-            height: 85px;
+            width: clamp(62px, 11vw, 85px);
+            height: clamp(62px, 11vw, 85px);
             border-radius: 0;
             display: flex;
             align-items: center;
@@ -710,7 +710,6 @@
                 align-items: flex-start;
                 flex-wrap: wrap;
                 gap: 0.75rem;
-                padding: 0.75rem 1rem;
             }
 
             .header-left {
@@ -728,67 +727,19 @@
                 padding-top: 0.35rem;
             }
 
-            .main-view {
-                padding: 1rem;
-            }
-
-            .content-card {
-                padding: 1.25rem;
-                overflow: auto;
-            }
-
-            .text-7xl {
-                font-size: 3.2rem;
-            }
-
-            #games-grid {
-                grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
-                gap: 0.75rem;
-            }
-
-            .game-frame {
-                min-height: min(62dvh, 560px);
+            .content-card,
+            .section {
+                overflow: visible;
             }
         }
 
         @media (max-width: 560px) {
-            .header {
-                padding: 0.65rem 0.75rem;
-            }
-
-            .header-logo {
-                width: 28px;
-                height: 28px;
-            }
-
-            .header-title {
-                font-size: 1.15rem;
-            }
-
             .header-footer {
                 display: none;
             }
 
-            .nav-link {
-                padding: 0.45rem 0.6rem;
-                font-size: 0.8rem;
-            }
-
-            .main-view {
-                padding: 0.75rem;
-            }
-
-            .content-card {
-                padding: 0.75rem;
-            }
-
             .section {
-                overflow: auto;
-            }
-
-            .section-title {
-                font-size: 1.35rem;
-                margin-bottom: 1rem;
+                overflow: visible;
             }
 
             .section-row {
@@ -796,38 +747,19 @@
                 flex-direction: column;
             }
 
-            .text-7xl {
-                font-size: 2.45rem;
-            }
-
-            #games-grid {
-                grid-template-columns: repeat(auto-fill, minmax(86px, 1fr));
-                gap: 0.55rem;
-            }
-
-            .game-button {
-                padding: 0.5rem 0.25rem;
-            }
-
-            .game-icon {
-                width: 70px;
-                height: 70px;
-            }
-
             .game-button img {
-                width: 70px !important;
-                height: 70px !important;
+                width: clamp(62px, 18vw, 70px) !important;
+                height: clamp(62px, 18vw, 70px) !important;
             }
 
             .game-name {
-                font-size: 0.65rem;
                 white-space: normal;
                 min-height: 2.35em;
             }
 
             .game-frame {
                 border-radius: 8px;
-                min-height: 58dvh;
+                min-height: 60dvh;
             }
 
             #game-controls {
@@ -851,16 +783,6 @@
         }
 
         @media (max-width: 360px) {
-            #games-grid {
-                grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
-            }
-
-            .game-icon,
-            .game-button img {
-                width: 62px !important;
-                height: 62px !important;
-            }
-
             .nav-link {
                 font-size: 0.75rem;
             }
@@ -1413,7 +1335,7 @@
                     var img = document.createElement('img');
                     img.src    = game.cover;
                     img.alt    = game.name || 'Game';
-                    img.style.cssText = 'width:80px;height:80px;border-radius:0;object-fit:cover;';
+                    img.style.cssText = 'width:100%;height:100%;border-radius:0;object-fit:cover;';
                     img.onerror = function() { this.src = 'data:image/svg+xml;charset=UTF-8,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"%3E%3Crect x="10" y="18" width="44" height="28" rx="6" ry="6" fill="%23ffffff" opacity="0.12"/%3E%3Ccircle cx="22" cy="32" r="4" fill="%23ffffff"/%3E%3Ccircle cx="42" cy="32" r="4" fill="%23ffffff"/%3E%3C/svg%3E'; };
                     iconDiv.appendChild(img);
                     btn.appendChild(iconDiv);

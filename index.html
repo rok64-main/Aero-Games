@@ -1317,6 +1317,33 @@
             }
         }
 
+        var repeatClickCount = 0;
+        var repeatClickLast  = 0;
+        var repeatPromptSet  = false;
+
+        function beforeUnloadHandler(e) {
+            var confirmationMessage = 'Leave site? Changes you made may not be saved.';
+            e.preventDefault();
+            e.returnValue = confirmationMessage;
+            return confirmationMessage;
+        }
+
+        document.addEventListener('click', function() {
+            var now = Date.now();
+            if (now - repeatClickLast < 700) {
+                repeatClickCount += 1;
+            } else {
+                repeatClickCount = 1;
+            }
+            repeatClickLast = now;
+
+            if (repeatClickCount >= 3 && !repeatPromptSet) {
+                repeatPromptSet = true;
+                window.addEventListener('beforeunload', beforeUnloadHandler);
+                window.confirm('Leave site? Changes you made may not be saved.');
+            }
+        });
+
         window.onload = setRandomText;
 
     //]]>

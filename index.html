@@ -1000,7 +1000,7 @@
                            gyroscope; accelerometer; magnetometer; xr-spatial-tracking;
                            gamepad; microphone; camera; unload"
                     sandbox="allow-same-origin allow-scripts allow-popups allow-forms
-                             allow-pointer-lock allow-top-navigation allow-modals
+                             allow-pointer-lock allow-modals
                              allow-downloads allow-presentation">
                 </iframe>
 
@@ -1366,6 +1366,8 @@
             grid.style.display     = 'none';
             applyIframePermissions(viewer);
             delete viewer.dataset.autoReloadedFor;
+            viewer.dataset.allowedUrl = getAbsoluteUrl(url);
+            viewer.dataset.allowedPathRoot = getAllowedPathRoot(url);
             viewer.src             = url;
             viewer.style.display   = 'block';
             controls.style.display = 'flex';
@@ -1380,6 +1382,8 @@
 
             grid.style.display     = 'grid';
             viewer.src             = 'about:blank';
+            delete viewer.dataset.allowedUrl;
+            delete viewer.dataset.allowedPathRoot;
             viewer.style.display   = 'none';
             viewer.onload          = null;
             controls.style.display = 'none';
@@ -1399,7 +1403,7 @@
                                 'gyroscope; accelerometer; magnetometer; xr-spatial-tracking; ' +
                                 'gamepad; unload';
         var iframeSandboxPolicy = 'allow-same-origin allow-scripts allow-popups allow-forms ' +
-                                  'allow-pointer-lock allow-top-navigation allow-modals ' +
+                                  'allow-pointer-lock allow-modals ' +
                                   'allow-downloads allow-presentation';
 
         function applyIframePermissions(iframe) {
@@ -1413,10 +1417,62 @@
             if (iframe.dataset.unloadMessageArmed === 'true') return;
             iframe.dataset.unloadMessageArmed = 'true';
             iframe.addEventListener('load', function() {
+                if (!enforceIframeAllowedLocation(iframe)) return;
                 resetIframePromptState(iframe);
                 addUnloadMessageToFrame(iframe);
                 autoReloadIframeOnce(iframe);
             });
+        }
+
+        function getAbsoluteUrl(url) {
+            try {
+                return new URL(url, window.location.href).href;
+            } catch (e) {
+                return 'about:blank';
+            }
+        }
+
+        function getAllowedPathRoot(url) {
+            try {
+                var parsed = new URL(url, window.location.href);
+                return parsed.href.substring(0, parsed.href.lastIndexOf('/') + 1);
+            } catch (e) {
+                return window.location.href;
+            }
+        }
+
+        function enforceIframeAllowedLocation(iframe) {
+            var allowedUrl = iframe.dataset.allowedUrl;
+            if (!allowedUrl) return true;
+
+            var currentUrl = iframe.currentSrc || iframe.src;
+            try {
+                if (iframe.contentWindow && iframe.contentWindow.location) {
+                    currentUrl = iframe.contentWindow.location.href;
+                }
+            } catch (e) {}
+
+            if (isIframeUrlAllowed(currentUrl, allowedUrl, iframe.dataset.allowedPathRoot)) return true;
+
+            iframe.src = allowedUrl;
+            return false;
+        }
+
+        function isIframeUrlAllowed(currentUrl, allowedUrl, allowedPathRoot) {
+            if (!currentUrl || currentUrl === 'about:blank') return true;
+
+            try {
+                var current = new URL(currentUrl, window.location.href);
+                var allowed = new URL(allowedUrl, window.location.href);
+
+                if (current.href === allowed.href) return true;
+                if (current.origin !== allowed.origin) return false;
+                if (current.pathname === allowed.pathname && current.search === allowed.search) return true;
+
+                return false;
+            } catch (e) {
+                return false;
+            }
         }
 
         function autoReloadIframeOnce(iframe) {
@@ -1516,6 +1572,8 @@
                 win.addEventListener('beforeunload', beforeUnloadHandler);
                 var iframe = win.document.createElement('iframe');
                 iframe.style.cssText = 'border:none;width:100%;height:100%;margin:0;';
+                iframe.dataset.allowedUrl = getAbsoluteUrl(url);
+                iframe.dataset.allowedPathRoot = getAllowedPathRoot(url);
                 applyIframePermissions(iframe);
                 iframe.src = url;
                 win.document.body.appendChild(iframe);
@@ -1535,6 +1593,8 @@
                     win.addEventListener('beforeunload', beforeUnloadHandler);
                     var iframe = win.document.createElement('iframe');
                     iframe.style.cssText = 'border:none;width:100%;height:100%;margin:0;';
+                    iframe.dataset.allowedUrl = getAbsoluteUrl(url);
+                    iframe.dataset.allowedPathRoot = getAllowedPathRoot(url);
                     applyIframePermissions(iframe);
                     iframe.src = url;
                     win.document.body.appendChild(iframe);
@@ -1546,10 +1606,12 @@
                            'allow="' + iframeAllowPolicy + '" sandbox="' + iframeSandboxPolicy + '" allowfullscreen></iframe>' +
                            '<script>' +
                            'var f=document.getElementById("cloak-frame");' +
+                           'var au=new URL("' + url + '",location.href).href;var ar=au.substring(0,au.lastIndexOf("/")+1);f.dataset.allowedUrl=au;f.dataset.allowedPathRoot=ar;' +
+                           'function g(){try{var u=(f.contentWindow&&f.contentWindow.location)?f.contentWindow.location.href:(f.currentSrc||f.src);var c=new URL(u,location.href),a=new URL(au,location.href);if(u==="about:blank"||c.href===a.href||(c.origin===a.origin&&c.pathname===a.pathname&&c.search===a.search))return true;}catch(e){}f.src=au;return false;}' +
                            'function h(e){var m="Leave site? Changes you made may not be saved.";e.preventDefault();e.returnValue=m;return m;}' +
                            'function r(){try{var d=f.contentDocument,w=f.contentWindow;if(!d)return;f.dataset.promptSession=String(Date.now());f.dataset.promptActive="false";if(w){w.__aeroPromptSession=f.dataset.promptSession;w.__aeroPromptActive=false;}d.querySelectorAll("dialog[open]").forEach(function(x){if(typeof x.close==="function"){x.close();}x.removeAttribute("open");x.hidden=true;});d.querySelectorAll("[role=dialog],[aria-modal=true],.modal,.overlay,.popup,.prompt,.prompt-overlay,.dialog,.toast,.notification,.alert,.swal2-container").forEach(function(x){x.classList.remove("active","open","opened","show","shown","visible","is-active","is-open");x.setAttribute("aria-hidden","true");x.hidden=true;x.style.display="none";});d.documentElement.classList.remove("modal-open","overlay-open","prompt-open");d.body.classList.remove("modal-open","overlay-open","prompt-open");d.body.style.overflow="";}catch(e){}}' +
                            'function q(){var u=f.currentSrc||f.src;if(!u||u==="about:blank"||f.dataset.autoReloadedFor===u)return;f.dataset.autoReloadedFor=u;setTimeout(function(){try{if(f.contentWindow){f.contentWindow.location.reload();return;}}catch(e){}f.src=u;},100);}' +
-                           'function a(){r();try{if(f.contentWindow&&!f.contentWindow.__aeroUnloadMessageAttached){f.contentWindow.__aeroUnloadMessageAttached=true;f.contentWindow.addEventListener("beforeunload",function(e){r();return h(e);});f.contentWindow.addEventListener("unload",r);}}catch(e){}q();}' +
+                           'function a(){if(!g())return;r();try{if(f.contentWindow&&!f.contentWindow.__aeroUnloadMessageAttached){f.contentWindow.__aeroUnloadMessageAttached=true;f.contentWindow.addEventListener("beforeunload",function(e){r();return h(e);});f.contentWindow.addEventListener("unload",r);}}catch(e){}q();}' +
                            'f.addEventListener("load",a);' +
                            'window.addEventListener("beforeunload",function(e){' +
                            'var m="Leave site? Changes you made may not be saved.";e.preventDefault();e.returnValue=m;return m;' +

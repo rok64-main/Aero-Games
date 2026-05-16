@@ -1362,15 +1362,13 @@
             var viewer   = document.getElementById('game-viewer');
             var backBtn  = document.getElementById('back-to-grid');
             var controls = document.getElementById('game-controls');
-            var playerUrl = getGamePlayerUrl(url);
 
             grid.style.display     = 'none';
             applyIframePermissions(viewer);
             delete viewer.dataset.autoReloadedFor;
-            viewer.dataset.gameUrl = getAbsoluteUrl(url);
-            viewer.dataset.allowedUrl = getAbsoluteUrl(playerUrl);
-            viewer.dataset.allowedPathRoot = getAllowedPathRoot(playerUrl);
-            viewer.src             = playerUrl;
+            viewer.dataset.allowedUrl = getAbsoluteUrl(url);
+            viewer.dataset.allowedPathRoot = getAllowedPathRoot(url);
+            viewer.src             = url;
             viewer.style.display   = 'block';
             controls.style.display = 'flex';
             backBtn.style.display  = 'block';
@@ -1384,7 +1382,6 @@
 
             grid.style.display     = 'grid';
             viewer.src             = 'about:blank';
-            delete viewer.dataset.gameUrl;
             delete viewer.dataset.allowedUrl;
             delete viewer.dataset.allowedPathRoot;
             viewer.style.display   = 'none';
@@ -1433,11 +1430,6 @@
             } catch (e) {
                 return 'about:blank';
             }
-        }
-
-        function getGamePlayerUrl(gameUrl) {
-            var absoluteGameUrl = getAbsoluteUrl(gameUrl);
-            return 'game-player.html?game=' + encodeURIComponent(absoluteGameUrl);
         }
 
         function getAllowedPathRoot(url) {

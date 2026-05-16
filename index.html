@@ -999,7 +999,7 @@
                     allow="autoplay; fullscreen; microphone; camera; geolocation;
                            gyroscope; accelerometer; magnetometer; xr-spatial-tracking;
                            gamepad; microphone; camera; unload"
-                    sandbox="allow-same-origin allow-scripts allow-popups allow-forms
+                    sandbox="allow-same-origin allow-scripts allow-forms
                              allow-pointer-lock allow-modals
                              allow-downloads allow-presentation">
                 </iframe>
@@ -1363,6 +1363,11 @@
             var backBtn  = document.getElementById('back-to-grid');
             var controls = document.getElementById('game-controls');
 
+            if (!isLocalGameUrl(url)) {
+                console.warn('Blocked non-local game URL:', url);
+                return;
+            }
+
             grid.style.display     = 'none';
             applyIframePermissions(viewer);
             delete viewer.dataset.autoReloadedFor;
@@ -1402,7 +1407,7 @@
         var iframeAllowPolicy = 'autoplay; fullscreen; microphone; camera; geolocation; ' +
                                 'gyroscope; accelerometer; magnetometer; xr-spatial-tracking; ' +
                                 'gamepad; unload';
-        var iframeSandboxPolicy = 'allow-same-origin allow-scripts allow-popups allow-forms ' +
+        var iframeSandboxPolicy = 'allow-same-origin allow-scripts allow-forms ' +
                                   'allow-pointer-lock allow-modals ' +
                                   'allow-downloads allow-presentation';
 
@@ -1419,6 +1424,7 @@
             iframe.addEventListener('load', function() {
                 if (!enforceIframeAllowedLocation(iframe)) return;
                 resetIframePromptState(iframe);
+                blockExternalIframeNavigation(iframe);
                 addUnloadMessageToFrame(iframe);
                 autoReloadIframeOnce(iframe);
             });
@@ -1438,6 +1444,19 @@
                 return parsed.href.substring(0, parsed.href.lastIndexOf('/') + 1);
             } catch (e) {
                 return window.location.href;
+            }
+        }
+
+        function isLocalGameUrl(url) {
+            try {
+                var parsed = new URL(url, window.location.href);
+                var gamesRoot = new URL(HTML_ROOT + '/', window.location.href);
+
+                return parsed.origin === window.location.origin &&
+                       parsed.href.indexOf(gamesRoot.href) === 0 &&
+                       parsed.pathname.toLowerCase().endsWith('.html');
+            } catch (e) {
+                return false;
             }
         }
 
@@ -1472,6 +1491,44 @@
                 return false;
             } catch (e) {
                 return false;
+            }
+        }
+
+        function blockExternalIframeNavigation(iframe) {
+            try {
+                var frameDocument = iframe.contentDocument;
+                var frameWindow = iframe.contentWindow;
+                if (!frameDocument || !frameWindow || frameWindow.__aeroNavigationBlocked) return;
+
+                frameWindow.__aeroNavigationBlocked = true;
+                frameWindow.open = function(url) {
+                    if (isIframeUrlAllowed(url, iframe.dataset.allowedUrl, iframe.dataset.allowedPathRoot)) {
+                        frameWindow.location.href = url;
+                    }
+                    return null;
+                };
+
+                frameDocument.addEventListener('click', function(e) {
+                    var link = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+                    if (!link) return;
+
+                    var nextUrl = link.href;
+                    if (isIframeUrlAllowed(nextUrl, iframe.dataset.allowedUrl, iframe.dataset.allowedPathRoot)) return;
+
+                    e.preventDefault();
+                    e.stopPropagation();
+                }, true);
+
+                frameDocument.addEventListener('submit', function(e) {
+                    var form = e.target;
+                    if (!form || !form.action) return;
+                    if (isIframeUrlAllowed(form.action, iframe.dataset.allowedUrl, iframe.dataset.allowedPathRoot)) return;
+
+                    e.preventDefault();
+                    e.stopPropagation();
+                }, true);
+            } catch (e) {
+                // Cross-origin frames cannot be modified, but the parent guard and sandbox still apply.
             }
         }
 

@@ -1377,6 +1377,7 @@
             viewer.style.display   = 'block';
             controls.style.display = 'flex';
             backBtn.style.display  = 'block';
+            watchIframeLocation(viewer);
         }
 
         function showGamesGrid() {
@@ -1389,6 +1390,7 @@
             viewer.src             = 'about:blank';
             delete viewer.dataset.allowedUrl;
             delete viewer.dataset.allowedPathRoot;
+            stopIframeLocationWatch(viewer);
             viewer.style.display   = 'none';
             viewer.onload          = null;
             controls.style.display = 'none';
@@ -1426,7 +1428,6 @@
                 resetIframePromptState(iframe);
                 blockExternalIframeNavigation(iframe);
                 addUnloadMessageToFrame(iframe);
-                autoReloadIframeOnce(iframe);
             });
         }
 
@@ -1469,7 +1470,10 @@
                 if (iframe.contentWindow && iframe.contentWindow.location) {
                     currentUrl = iframe.contentWindow.location.href;
                 }
-            } catch (e) {}
+            } catch (e) {
+                iframe.src = allowedUrl;
+                return false;
+            }
 
             if (isIframeUrlAllowed(currentUrl, allowedUrl, iframe.dataset.allowedPathRoot)) return true;
 
@@ -1527,27 +1531,55 @@
                     e.preventDefault();
                     e.stopPropagation();
                 }, true);
+
+                function blockExternalEmbeds(root) {
+                    var nodes = root.querySelectorAll('iframe[src], frame[src], embed[src], object[data]');
+                    nodes.forEach(function(node) {
+                        var nextUrl = node.getAttribute('src') || node.getAttribute('data');
+                        if (!nextUrl || isIframeUrlAllowed(nextUrl, iframe.dataset.allowedUrl, iframe.dataset.allowedPathRoot)) return;
+
+                        node.dataset.blockedExternalUrl = nextUrl;
+                        if (node.hasAttribute('src')) node.setAttribute('src', 'about:blank');
+                        if (node.hasAttribute('data')) node.removeAttribute('data');
+                        node.style.display = 'none';
+                    });
+                }
+
+                blockExternalEmbeds(frameDocument);
+
+                if (frameWindow.MutationObserver) {
+                    var observer = new frameWindow.MutationObserver(function() {
+                        blockExternalEmbeds(frameDocument);
+                    });
+                    observer.observe(frameDocument.documentElement, {
+                        childList: true,
+                        subtree: true,
+                        attributes: true,
+                        attributeFilter: ['src', 'data']
+                    });
+                }
             } catch (e) {
                 // Cross-origin frames cannot be modified, but the parent guard and sandbox still apply.
             }
         }
 
-        function autoReloadIframeOnce(iframe) {
-            var currentUrl = iframe.currentSrc || iframe.src;
-            if (!currentUrl || currentUrl === 'about:blank') return;
-            if (iframe.dataset.autoReloadedFor === currentUrl) return;
+        function watchIframeLocation(iframe) {
+            stopIframeLocationWatch(iframe);
+            iframe.__aeroLocationWatch = window.setInterval(function() {
+                if (!iframe.dataset.allowedUrl || iframe.src === 'about:blank') {
+                    stopIframeLocationWatch(iframe);
+                    return;
+                }
 
-            iframe.dataset.autoReloadedFor = currentUrl;
-            setTimeout(function() {
-                try {
-                    if (iframe.contentWindow) {
-                        iframe.contentWindow.location.reload();
-                        return;
-                    }
-                } catch (e) {}
+                enforceIframeAllowedLocation(iframe);
+            }, 250);
+        }
 
-                iframe.src = currentUrl;
-            }, 100);
+        function stopIframeLocationWatch(iframe) {
+            if (!iframe.__aeroLocationWatch) return;
+
+            window.clearInterval(iframe.__aeroLocationWatch);
+            iframe.__aeroLocationWatch = null;
         }
 
         function resetIframePromptState(iframe) {
@@ -1666,8 +1698,7 @@
                            'function g(){try{var u=(f.contentWindow&&f.contentWindow.location)?f.contentWindow.location.href:(f.currentSrc||f.src);var c=new URL(u,location.href),a=new URL(au,location.href);if(u==="about:blank"||c.href===a.href||(c.origin===a.origin&&c.pathname===a.pathname&&c.search===a.search))return true;}catch(e){}f.src=au;return false;}' +
                            'function h(e){var m="Leave site? Changes you made may not be saved.";e.preventDefault();e.returnValue=m;return m;}' +
                            'function r(){try{var d=f.contentDocument,w=f.contentWindow;if(!d)return;f.dataset.promptSession=String(Date.now());f.dataset.promptActive="false";if(w){w.__aeroPromptSession=f.dataset.promptSession;w.__aeroPromptActive=false;}d.querySelectorAll("dialog[open]").forEach(function(x){if(typeof x.close==="function"){x.close();}x.removeAttribute("open");x.hidden=true;});d.querySelectorAll("[role=dialog],[aria-modal=true],.modal,.overlay,.popup,.prompt,.prompt-overlay,.dialog,.toast,.notification,.alert,.swal2-container").forEach(function(x){x.classList.remove("active","open","opened","show","shown","visible","is-active","is-open");x.setAttribute("aria-hidden","true");x.hidden=true;x.style.display="none";});d.documentElement.classList.remove("modal-open","overlay-open","prompt-open");d.body.classList.remove("modal-open","overlay-open","prompt-open");d.body.style.overflow="";}catch(e){}}' +
-                           'function q(){var u=f.currentSrc||f.src;if(!u||u==="about:blank"||f.dataset.autoReloadedFor===u)return;f.dataset.autoReloadedFor=u;setTimeout(function(){try{if(f.contentWindow){f.contentWindow.location.reload();return;}}catch(e){}f.src=u;},100);}' +
-                           'function a(){if(!g())return;r();try{if(f.contentWindow&&!f.contentWindow.__aeroUnloadMessageAttached){f.contentWindow.__aeroUnloadMessageAttached=true;f.contentWindow.addEventListener("beforeunload",function(e){r();return h(e);});f.contentWindow.addEventListener("unload",r);}}catch(e){}q();}' +
+                           'function a(){if(!g())return;r();try{if(f.contentWindow&&!f.contentWindow.__aeroUnloadMessageAttached){f.contentWindow.__aeroUnloadMessageAttached=true;f.contentWindow.addEventListener("beforeunload",function(e){r();return h(e);});f.contentWindow.addEventListener("unload",r);}}catch(e){}}' +
                            'f.addEventListener("load",a);' +
                            'window.addEventListener("beforeunload",function(e){' +
                            'var m="Leave site? Changes you made may not be saved.";e.preventDefault();e.returnValue=m;return m;' +
